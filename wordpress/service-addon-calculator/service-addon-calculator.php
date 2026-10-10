@@ -24,6 +24,8 @@ require_once SAC_PATH . 'includes/post-type.php';
 require_once SAC_PATH . 'includes/meta.php';
 require_once SAC_PATH . 'includes/assets.php';
 require_once SAC_PATH . 'includes/block.php';
+require_once SAC_PATH . 'includes/services-calculator.php';
+require_once SAC_PATH . 'includes/block.php';
 
 if ( is_admin() ) {
 	require_once SAC_PATH . 'includes/meta-box.php';

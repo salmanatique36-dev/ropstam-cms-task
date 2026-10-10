@@ -8,7 +8,5 @@
  */
 
 defined( 'ABSPATH' ) || exit;
-?>
-<div <?php echo get_block_wrapper_attributes(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by core. ?>>
-	<p><?php esc_html_e( 'Services Calculator block is registered.', 'service-addon-calculator' ); ?></p>
-</div>
+
+echo sac_render_services_calculator( get_block_wrapper_attributes( array( 'class' => 'sac-calculator' ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Every dynamic value is escaped inside the function.
