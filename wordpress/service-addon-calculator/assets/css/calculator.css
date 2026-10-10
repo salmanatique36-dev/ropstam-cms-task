@@ -1,0 +1,190 @@
+/**
+ * Services Calculator styles.
+ *
+ * - Scoped to plugin classes (sac- prefix), no global element selectors.
+ * - Mostly single-class selectors so themes can override easily.
+ * - Fonts and text colors are inherited from the active theme.
+ * - The grid adapts to any width without media queries.
+ */
+
+.sac-calculator {
+	--sac-accent: #1d4ed8;
+	--sac-border: rgba(127, 127, 127, 0.35);
+	--sac-selected-bg: rgba(29, 78, 216, 0.08);
+	--sac-radius: 12px;
+	--sac-gap: 1.5rem;
+}
+
+/* Softer borders that follow the text color, in browsers that support color-mix(). */
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+	.sac-calculator {
+		--sac-border: color-mix(in srgb, currentColor 18%, transparent);
+		--sac-selected-bg: color-mix(in srgb, var(--sac-accent) 8%, transparent);
+	}
+}
+
+.sac-calculator,
+.sac-calculator *,
+.sac-calculator *::before,
+.sac-calculator *::after {
+	box-sizing: border-box;
+}
+
+.sac-heading {
+	margin: 0 0 var(--sac-gap);
+}
+
+/* As many 280px+ columns as fit; a single column on small screens. */
+.sac-services {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+	gap: var(--sac-gap);
+}
+
+.sac-card {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: clamp(1rem, 3vw, 1.5rem);
+	border: 1px solid var(--sac-border);
+	border-radius: var(--sac-radius);
+}
+
+.sac-card__title {
+	margin: 0;
+	font-size: 1.25rem;
+	line-height: 1.3;
+}
+
+.sac-card__title a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.sac-card__title a:hover {
+	text-decoration: underline;
+}
+
+.sac-card__excerpt {
+	margin: 0;
+}
+
+/* Base price and delivery side by side. */
+.sac-card__meta {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.75rem;
+	margin: 0;
+}
+
+.sac-card__meta dt {
+	font-size: 0.8125rem;
+}
+
+.sac-card__meta dd {
+	margin: 0;
+	font-weight: 600;
+}
+
+/* Reset default fieldset styles. min-width: 0 stops it overflowing the grid. */
+.sac-addons {
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.sac-addons__legend {
+	margin-bottom: 0.5rem;
+	padding: 0;
+	font-weight: 600;
+}
+
+.sac-addon {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	min-height: 44px;
+	padding: 0.5rem 0.75rem;
+	border: 1px solid var(--sac-border);
+	border-radius: calc(var(--sac-radius) - 4px);
+}
+
+.sac-addon + .sac-addon {
+	margin-top: 0.5rem;
+}
+
+/* Highlight the selected add-on. Browsers without :has() simply skip this. */
+.sac-addon:has(.sac-addon__input:checked) {
+	border-color: var(--sac-accent);
+	background-color: var(--sac-selected-bg);
+}
+
+.sac-addon__input {
+	flex-shrink: 0;
+	width: 1.25rem;
+	height: 1.25rem;
+	margin: 0;
+	accent-color: var(--sac-accent);
+	cursor: pointer;
+}
+
+/* The whole label row is clickable. */
+.sac-addon__label {
+	display: flex;
+	flex: 1;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 0.25rem 0.75rem;
+	cursor: pointer;
+}
+
+.sac-addon__price {
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+/* Pushed to the bottom so totals line up across cards. */
+.sac-card__total {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 0.5rem;
+	margin: auto 0 0;
+	padding-top: 1rem;
+	border-top: 1px solid var(--sac-border);
+}
+
+.sac-card__total-label {
+	font-weight: 600;
+}
+
+/* Tabular digits stop the number from jumping as it changes. */
+.sac-card__amount {
+	font-size: 1.5rem;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+/* Visible keyboard focus. currentColor keeps contrast on light and dark themes. */
+.sac-calculator a:focus-visible,
+.sac-addon__input:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
+}
+
+.sac-empty {
+	margin: 0;
+	padding: 1.5rem;
+	border: 1px dashed var(--sac-border);
+	border-radius: var(--sac-radius);
+	text-align: center;
+}
+
+/* Smooth state changes, only for users who have not asked for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+	.sac-addon {
+		transition: border-color 0.15s ease, background-color 0.15s ease;
+	}
+}
