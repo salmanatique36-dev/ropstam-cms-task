@@ -13,6 +13,12 @@
 		"html": false,
 		"align": [ "wide", "full" ]
 	},
+	"attributes": {
+		"align": {
+			"type": "string",
+			"default": "wide"
+		}
+	},
 	"editorScript": "sac-block-editor",
 	"viewScript": "sac-calculator",
 	"style": "sac-calculator",
