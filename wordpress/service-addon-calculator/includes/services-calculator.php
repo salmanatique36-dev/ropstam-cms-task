@@ -131,11 +131,13 @@ function sac_render_services_calculator( $wrapper_attributes = '' ) {
  *
  * @param WP_Post $service Service post.
  */
+
 function sac_render_service_card( $service ) {
 	$base_price    = sac_sanitize_price( get_post_meta( $service->ID, 'base_price', true ) );
 	$delivery_days = absint( get_post_meta( $service->ID, 'delivery_time_days', true ) );
 	$addons        = $base_price > 0 ? sac_get_service_addons( $service->ID ) : array();
 	$excerpt       = wp_trim_words( get_the_excerpt( $service ), 20 );
+	$modified_gmt  = (int) get_post_modified_time( 'U', true, $service );
 	$card_id       = wp_unique_id( 'sac-service-' );
 	$total_id      = $card_id . '-total';
 
@@ -145,9 +147,17 @@ function sac_render_service_card( $service ) {
 	}
 	?>
 	<article class="sac-card" data-sac-card data-sac-base="<?php echo esc_attr( $base_price ); ?>" aria-labelledby="<?php echo esc_attr( $card_id . '-title' ); ?>">
-		<h3 id="<?php echo esc_attr( $card_id . '-title' ); ?>" class="sac-card__title">
-			<a href="<?php echo esc_url( get_permalink( $service ) ); ?>"><?php echo esc_html( get_the_title( $service ) ); ?></a>
-		</h3>
+		<header class="sac-card__header">
+			<h3 id="<?php echo esc_attr( $card_id . '-title' ); ?>" class="sac-card__title">
+				<a href="<?php echo esc_url( get_permalink( $service ) ); ?>"><?php echo esc_html( get_the_title( $service ) ); ?></a>
+			</h3>
+			<time class="sac-card__updated" datetime="<?php echo esc_attr( gmdate( 'c', $modified_gmt ) ); ?>">
+				<?php
+				/* translators: %s: human-readable time difference, e.g. "2 days". */
+				echo esc_html( sprintf( __( 'Updated %s ago', 'service-addon-calculator' ), human_time_diff( $modified_gmt ) ) );
+				?>
+			</time>
+		</header>
 
 		<?php if ( $excerpt ) : ?>
 			<p class="sac-card__excerpt"><?php echo esc_html( $excerpt ); ?></p>
@@ -182,24 +192,25 @@ function sac_render_service_card( $service ) {
 				<legend class="sac-addons__legend"><?php esc_html_e( 'Optional add-ons', 'service-addon-calculator' ); ?></legend>
 
 				<?php foreach ( $addons as $index => $addon ) : ?>
-					<div class="sac-addon">
+					<label class="sac-addon" for="<?php echo esc_attr( $input_ids[ $index ] ); ?>">
+						<span class="sac-addon__text">
+							<span class="sac-addon__name"><?php echo esc_html( $addon['label'] ); ?></span>
+							<span class="sac-addon__price">+<?php echo esc_html( sac_format_price( $addon['price'] ) ); ?></span>
+						</span>
 						<input
 							type="checkbox"
+							role="switch"
 							id="<?php echo esc_attr( $input_ids[ $index ] ); ?>"
 							class="sac-addon__input"
 							value="<?php echo esc_attr( $addon['id'] ); ?>"
 							data-sac-price="<?php echo esc_attr( $addon['price'] ); ?>"
 						>
-						<label for="<?php echo esc_attr( $input_ids[ $index ] ); ?>" class="sac-addon__label">
-							<span class="sac-addon__name"><?php echo esc_html( $addon['label'] ); ?></span>
-							<span class="sac-addon__price">+<?php echo esc_html( sac_format_price( $addon['price'] ) ); ?></span>
-						</label>
-					</div>
+					</label>
 				<?php endforeach; ?>
 			</fieldset>
 
 			<p class="sac-card__total">
-				<span id="<?php echo esc_attr( $total_id . '-label' ); ?>" class="sac-card__total-label"><?php esc_html_e( 'Estimated price', 'service-addon-calculator' ); ?></span>
+				<span id="<?php echo esc_attr( $total_id . '-label' ); ?>" class="sac-card__total-label"><?php esc_html_e( 'Estimated total', 'service-addon-calculator' ); ?></span>
 				<output
 					id="<?php echo esc_attr( $total_id ); ?>"
 					class="sac-card__amount"
