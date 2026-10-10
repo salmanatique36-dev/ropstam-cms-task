@@ -21,7 +21,7 @@ define( 'SAC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SAC_URL', plugin_dir_url( __FILE__ ) );
 
 require_once SAC_PATH . 'includes/post-type.php';
-
+require_once SAC_PATH . 'includes/meta.php';
 /**
  * Activation: register the CPT first, then flush rewrite rules
  * so /services/ URLs work immediately without a 404.
