@@ -22,6 +22,10 @@ define( 'SAC_URL', plugin_dir_url( __FILE__ ) );
 
 require_once SAC_PATH . 'includes/post-type.php';
 require_once SAC_PATH . 'includes/meta.php';
+
+if ( is_admin() ) {
+	require_once SAC_PATH . 'includes/meta-box.php';
+}
 /**
  * Activation: register the CPT first, then flush rewrite rules
  * so /services/ URLs work immediately without a 404.
