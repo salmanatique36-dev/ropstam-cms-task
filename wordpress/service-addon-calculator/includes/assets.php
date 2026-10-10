@@ -46,7 +46,7 @@ function sac_register_assets() {
 	wp_register_script(
 		'sac-block-editor',
 		SAC_URL . 'assets/js/block-editor.js',
-		array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-server-side-render', 'wp-i18n' ),
+		array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-server-side-render' ),
 		sac_asset_version( 'assets/js/block-editor.js' ),
 		array( 'in_footer' => false )
 	);

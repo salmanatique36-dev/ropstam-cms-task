@@ -23,6 +23,7 @@ define( 'SAC_URL', plugin_dir_url( __FILE__ ) );
 require_once SAC_PATH . 'includes/post-type.php';
 require_once SAC_PATH . 'includes/meta.php';
 require_once SAC_PATH . 'includes/assets.php';
+require_once SAC_PATH . 'includes/block.php';
 
 if ( is_admin() ) {
 	require_once SAC_PATH . 'includes/meta-box.php';
