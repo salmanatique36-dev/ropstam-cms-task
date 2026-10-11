@@ -13,6 +13,30 @@ Technical assessment with two parts in one repository:
 | WordPress shortcode | <https://tan-cassowary-439520.hostingersite.com/shortcode-demo/> | Same output through `[sac_services_calculator]` |
 | Shopify | <https://ropstam-bundle-demo.myshopify.com/> | Storefront password: `ropstam2026`. Bundle builder on the home page |
 
+## Key technical decisions
+
+**Both parts**
+
+- **Vanilla JS, zero dependencies.** Both components only need events, selectors and text updates, which browsers handle natively. No jQuery and no build step.
+- **Prices in integer cents.** Avoids floating point errors such as `0.1 + 0.2`. Shopify already provides cents; the WordPress script converts before adding.
+- **Native form controls.** Checkboxes and radios keep keyboard and screen reader support for free. CSS only changes how they look.
+- **Assets only where used.** Each platform loads the CSS and JS only on pages that render the component.
+
+**WordPress**
+
+- **Dynamic block instead of a static one.** "Most recently updated" changes over time, so the markup is rendered on every request instead of being saved in post content.
+- **`block.json` with registered handles.** One definition shared by PHP and the editor, and `viewScript` loads only when the block is on the page. The editor script uses WordPress globals, so there is no build step.
+- **`register_post_meta()` plus a meta box.** The meta box is only the UI. Registration provides types, defaults, central sanitization and REST access for every save path.
+- **One render function for the block and the shortcode.** No duplicated markup.
+
+**Shopify**
+
+- **Section blocks for the groups (`max_blocks: 3`).** Merchants can add, remove and reorder groups, which fixed settings can't offer.
+- **One `/cart/add.js` request for the whole bundle.** Tested: when one item is sold out, Shopify rejects the whole request, so a partial bundle never reaches the cart. Three separate requests could leave half a bundle behind.
+- **Shopify standard storefront events instead of theme-specific code.** The section dispatches `shopify:cart:lines-update`, so Horizon's cart icon and drawer refresh without depending on theme internals.
+- **Self-contained section.** Customer-facing text lives in the schema `locales` object and only three files are needed, so the section can be copied into another Online Store 2.0 theme.
+- **Only task files in Git.** The Horizon theme is pulled with Shopify CLI and ignored, so the repository and every commit show only the work written for this task.
+
 ## Repository structure
 
 ```
