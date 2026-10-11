@@ -1,0 +1,13 @@
+# Track only the files written for this task.
+# The rest of the Horizon theme is pulled with Shopify CLI (see README).
+/*
+!/.gitignore
+
+!/sections/
+/sections/*
+!/sections/bundle-builder.liquid
+
+!/assets/
+/assets/*
+!/assets/bundle-builder.js
+!/assets/bundle-builder.css
