@@ -1,0 +1,477 @@
+/**
+ * Bundle Builder section styles.
+ *
+ * - Every selector uses the bundle-builder prefix (BEM), nothing global.
+ * - Colours come from currentColor, so the section follows any theme
+ *   colour scheme (light or dark) without hardcoded brand colours.
+ * - Mobile first: one column, then steps + sticky summary from 990px.
+ */
+
+/* ---------- Tokens ---------- */
+
+.bundle-builder {
+  --bb-gap: 1.5rem;
+  --bb-radius: 14px;
+  --bb-radius-sm: 10px;
+  --bb-border: rgba(127, 127, 127, 0.3);
+  --bb-tint: rgba(127, 127, 127, 0.08);
+  --bb-error: #b42318;
+
+  /* Custom elements are inline by default. */
+  display: block;
+  padding-block: var(--bundle-padding-top, 48px) var(--bundle-padding-bottom, 48px);
+}
+
+@supports (color: color-mix(in srgb, red 50%, blue)) {
+  .bundle-builder {
+    --bb-border: color-mix(in srgb, currentColor 16%, transparent);
+    --bb-tint: color-mix(in srgb, currentColor 5%, transparent);
+  }
+}
+
+.bundle-builder *,
+.bundle-builder *::before,
+.bundle-builder *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- Layout ---------- */
+
+.bundle-builder__inner {
+  width: 100%;
+  max-width: var(--page-width, 1200px);
+  margin-inline: auto;
+  padding-inline: var(--page-margin, clamp(1rem, 4vw, 2.5rem));
+}
+
+.bundle-builder__header {
+  max-width: 40rem;
+  margin-bottom: calc(var(--bb-gap) * 1.5);
+}
+
+.bundle-builder__heading {
+  margin: 0;
+}
+
+.bundle-builder__description {
+  margin: 0.5rem 0 0;
+}
+
+.bundle-builder__form {
+  display: grid;
+  gap: calc(var(--bb-gap) * 1.5);
+}
+
+@media (min-width: 990px) {
+  .bundle-builder__form {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+    align-items: start;
+  }
+
+  .bundle-builder__summary {
+    position: sticky;
+    top: calc(var(--header-height, 0px) + 1.5rem);
+  }
+}
+
+/* ---------- Steps ---------- */
+
+.bundle-builder__steps {
+  display: grid;
+  gap: calc(var(--bb-gap) * 1.75);
+  min-width: 0;
+}
+
+/* Reset fieldset defaults. min-width: 0 stops it overflowing the grid. */
+.bundle-builder__group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.bundle-builder__legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0;
+}
+
+.bundle-builder__step {
+  display: inline-flex;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--bb-border);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bundle-builder__group-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* As many 160px+ columns as fit: 2 on phones, 3 to 4 on desktop. */
+.bundle-builder__options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
+  gap: 1rem;
+}
+
+/* ---------- Option card ---------- */
+
+.bundle-builder__option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+/* The native radio stays in the DOM for keyboard and screen readers,
+   but is hidden visually. The card label shows its state instead. */
+.bundle-builder__radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bundle-builder__card {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--bb-border);
+  border-radius: var(--bb-radius);
+  cursor: pointer;
+}
+
+/* Selection indicator: an empty ring that fills when selected. */
+.bundle-builder__card::after {
+  content: "";
+  position: absolute;
+  top: 0.625rem;
+  right: 0.625rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+.bundle-builder__radio:checked + .bundle-builder__card {
+  border-color: currentColor;
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+
+.bundle-builder__radio:checked + .bundle-builder__card::after {
+  background: radial-gradient(circle, currentColor 0 38%, transparent 44%);
+}
+
+.bundle-builder__radio:focus-visible + .bundle-builder__card {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* Sold out: dim only the image so the text keeps full contrast. */
+.bundle-builder__radio:disabled + .bundle-builder__card {
+  cursor: not-allowed;
+}
+
+.bundle-builder__radio:disabled + .bundle-builder__card::after {
+  display: none;
+}
+
+.bundle-builder__radio:disabled + .bundle-builder__card .bundle-builder__image {
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+
+@media (hover: hover) {
+  .bundle-builder__radio:not(:disabled) + .bundle-builder__card:hover {
+    border-color: currentColor;
+  }
+}
+
+.bundle-builder__media {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  background: var(--bb-tint);
+}
+
+.bundle-builder__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0.75rem;
+  object-fit: contain;
+}
+
+.bundle-builder__image--placeholder {
+  fill: currentColor;
+  opacity: 0.3;
+}
+
+/* Fixed dark badge: readable on any image or colour scheme. */
+.bundle-builder__badge {
+  position: absolute;
+  top: 0.625rem;
+  left: 0.625rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  background: #1f1f1f;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.bundle-builder__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 0.875rem 0.875rem;
+}
+
+.bundle-builder__title {
+  display: -webkit-box;
+  overflow: hidden;
+  font-weight: 600;
+  line-height: 1.3;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.bundle-builder__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.375rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.bundle-builder__compare {
+  font-size: 0.875em;
+}
+
+.bundle-builder__variant {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--bb-border);
+  border-radius: var(--bb-radius-sm);
+  background-color: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.bundle-builder__variant:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* ---------- Summary ---------- */
+
+.bundle-builder__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border: 1px solid var(--bb-border);
+  border-radius: var(--bb-radius);
+  background: var(--bb-tint);
+}
+
+.bundle-builder__summary-title {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.bundle-builder__picks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bundle-builder__pick {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding-left: 1.75rem;
+}
+
+.bundle-builder__pick::before {
+  content: "";
+  position: absolute;
+  top: 0.125rem;
+  left: 0;
+  width: 1rem;
+  height: 1rem;
+  border: 2px dashed var(--bb-border);
+  border-radius: 50%;
+}
+
+.bundle-builder__pick.is-selected::before {
+  border: 2px solid currentColor;
+  background: radial-gradient(circle, currentColor 0 38%, transparent 44%);
+}
+
+.bundle-builder__pick-step {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.bundle-builder__pick-value {
+  font-style: italic;
+}
+
+.bundle-builder__pick.is-selected .bundle-builder__pick-value {
+  font-style: normal;
+  font-weight: 600;
+}
+
+.bundle-builder__total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--bb-border);
+  font-weight: 600;
+}
+
+/* Tabular digits stop the number from jumping as it changes. */
+.bundle-builder__amount {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Button and states ---------- */
+
+.bundle-builder__submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 48px;
+}
+
+.bundle-builder__submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* While adding, keep full opacity so the spinner is clearly visible. */
+.bundle-builder__submit[aria-busy="true"] {
+  cursor: progress;
+  opacity: 1;
+}
+
+.bundle-builder__spinner {
+  display: none;
+  width: 1.1em;
+  height: 1.1em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: bundle-builder-spin 0.7s linear infinite;
+}
+
+.bundle-builder__submit[aria-busy="true"] .bundle-builder__spinner {
+  display: inline-block;
+}
+
+@keyframes bundle-builder-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.bundle-builder__hint,
+.bundle-builder__message {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.bundle-builder__message {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--bb-border);
+  border-radius: var(--bb-radius-sm);
+}
+
+.bundle-builder__message:empty {
+  display: none;
+}
+
+.bundle-builder__message--error {
+  border-color: var(--bb-error);
+  color: var(--bb-error);
+}
+
+.bundle-builder__message a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Editor-only hints. */
+.bundle-builder__notice {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border: 1px dashed var(--bb-border);
+  border-radius: var(--bb-radius-sm);
+}
+
+.bundle-builder__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Motion and forced colours ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .bundle-builder__card {
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bundle-builder__spinner {
+    animation-duration: 1.6s;
+  }
+}
+
+/* Windows High Contrast: box-shadow is removed, so mark selection with an outline. */
+@media (forced-colors: active) {
+  .bundle-builder__radio:checked + .bundle-builder__card {
+    outline: 3px solid Highlight;
+    outline-offset: -3px;
+  }
+}
