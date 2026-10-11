@@ -125,12 +125,33 @@
 
 /* ---------- Option card ---------- */
 
+/* The whole option (card + variant picker) is one bordered tile,
+   so tiles line up whether or not a product has variants. */
 .bundle-builder__option {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
   min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--bb-border);
+  border-radius: var(--bb-radius);
+}
+
+/* Tile states use :has(). Browsers without it still show the filled ring. */
+.bundle-builder__option:has(.bundle-builder__radio:checked) {
+  border-color: currentColor;
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+
+.bundle-builder__option:has(.bundle-builder__radio:focus-visible) {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .bundle-builder__option:has(.bundle-builder__radio:not(:disabled)):hover {
+    border-color: currentColor;
+  }
 }
 
 /* The native radio stays in the DOM for keyboard and screen readers,
@@ -149,36 +170,24 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  overflow: hidden;
-  border: 1px solid var(--bb-border);
-  border-radius: var(--bb-radius);
   cursor: pointer;
 }
 
-/* Selection indicator: an empty ring that fills when selected. */
+/* Selection ring next to the price, on the theme background,
+   so it stays visible on light and dark product images alike. */
 .bundle-builder__card::after {
   content: "";
   position: absolute;
-  top: 0.625rem;
-  right: 0.625rem;
+  right: 0.875rem;
+  bottom: 0.875rem;
   width: 1.25rem;
   height: 1.25rem;
   border: 2px solid currentColor;
   border-radius: 50%;
 }
 
-.bundle-builder__radio:checked + .bundle-builder__card {
-  border-color: currentColor;
-  box-shadow: inset 0 0 0 1px currentColor;
-}
-
 .bundle-builder__radio:checked + .bundle-builder__card::after {
   background: radial-gradient(circle, currentColor 0 38%, transparent 44%);
-}
-
-.bundle-builder__radio:focus-visible + .bundle-builder__card {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
 }
 
 /* Sold out: dim only the image so the text keeps full contrast. */
@@ -195,30 +204,24 @@
   filter: grayscale(1);
 }
 
-@media (hover: hover) {
-  .bundle-builder__radio:not(:disabled) + .bundle-builder__card:hover {
-    border-color: currentColor;
-  }
-}
-
 .bundle-builder__media {
   position: relative;
   display: block;
   aspect-ratio: 1;
-  background: var(--bb-tint);
 }
 
 .bundle-builder__image {
   display: block;
   width: 100%;
   height: 100%;
-  padding: 0.75rem;
+  padding: 0.5rem;
   object-fit: contain;
 }
 
 .bundle-builder__image--placeholder {
+  background: var(--bb-tint);
   fill: currentColor;
-  opacity: 0.3;
+  opacity: 0.35;
 }
 
 /* Fixed dark badge: readable on any image or colour scheme. */
@@ -234,8 +237,10 @@
   font-weight: 600;
 }
 
+/* Price is pushed to the bottom so prices line up across tiles. */
 .bundle-builder__info {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 0.25rem;
   padding: 0.75rem 0.875rem 0.875rem;
@@ -256,6 +261,8 @@
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0.375rem;
+  margin-top: auto;
+  padding-right: 2rem; /* Room for the selection ring. */
   font-variant-numeric: tabular-nums;
 }
 
@@ -264,8 +271,9 @@
 }
 
 .bundle-builder__variant {
-  width: 100%;
+  width: calc(100% - 1.75rem);
   min-height: 44px;
+  margin: 0 0.875rem 0.875rem;
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--bb-border);
   border-radius: var(--bb-radius-sm);
@@ -273,6 +281,7 @@
   color: inherit;
   font: inherit;
   font-size: 0.875rem;
+  cursor: pointer;
 }
 
 .bundle-builder__variant:focus-visible {
@@ -457,7 +466,7 @@
 /* ---------- Motion and forced colours ---------- */
 
 @media (prefers-reduced-motion: no-preference) {
-  .bundle-builder__card {
+  .bundle-builder__option {
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
 }
@@ -470,7 +479,7 @@
 
 /* Windows High Contrast: box-shadow is removed, so mark selection with an outline. */
 @media (forced-colors: active) {
-  .bundle-builder__radio:checked + .bundle-builder__card {
+  .bundle-builder__option:has(.bundle-builder__radio:checked) {
     outline: 3px solid Highlight;
     outline-offset: -3px;
   }
